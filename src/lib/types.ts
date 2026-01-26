@@ -19,6 +19,15 @@ export type Recommendation = {
   source: string;
 };
 
+export type XAIFactor = {
+  feature: string;
+  impact: number;
+};
+
+export type XAIBlock = {
+  top_factors: XAIFactor[];
+};
+
 export type PredictionResponse = {
   id: number;
   prediction: number;
@@ -32,5 +41,7 @@ export type PredictionResponse = {
     height_cm: number;
     weight_kg: number;
   };
+  xai: XAIBlock | null; 
+  xai_text: string | null;
   created_at: string;
 };
