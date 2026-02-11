@@ -37,7 +37,7 @@ function RiskRing({ value }: { value: number }) {
           cy="80"
           r={r}
           strokeWidth="12"
-          className="fill-none stroke-slate-200"
+          className="fill-none stroke-slate-200 dark:stroke-slate-700"
         />
         <circle
           cx="80"
@@ -46,13 +46,15 @@ function RiskRing({ value }: { value: number }) {
           strokeWidth="12"
           strokeLinecap="round"
           strokeDasharray={`${dash} ${c - dash}`}
-          className="fill-none stroke-red-500"
+          className="fill-none stroke-red-500 dark:stroke-red-400"
         />
       </svg>
 
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="text-3xl font-extrabold text-slate-900">{pct}%</div>
-        <div className="text-[10px] tracking-widest font-semibold text-red-600 mt-0.5">
+        <div className="text-3xl font-extrabold text-slate-900 dark:text-white">
+          {pct}%
+        </div>
+        <div className="text-[10px] tracking-widest font-semibold text-red-600 dark:text-red-400 mt-0.5">
           PROBABILITY
         </div>
       </div>
@@ -80,10 +82,14 @@ function XAIImpactBars({
         return (
           <div key={i}>
             <div className="flex justify-between items-center text-sm mb-2">
-              <span className="font-semibold text-slate-800">{label}</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">
+                {label}
+              </span>
               <span
                 className={`text-xs font-bold ${
-                  positive ? "text-red-600" : "text-emerald-600"
+                  positive
+                    ? "text-red-600 dark:text-red-400"
+                    : "text-emerald-600 dark:text-emerald-400"
                 }`}
               >
                 {positive ? "+" : "-"}
@@ -91,10 +97,12 @@ function XAIImpactBars({
               </span>
             </div>
 
-            <div className="h-2 w-full rounded-full bg-slate-100">
+            <div className="h-2 w-full rounded-full bg-slate-100 dark:bg-slate-800">
               <div
                 className={`h-2 rounded-full ${
-                  positive ? "bg-red-500" : "bg-emerald-500"
+                  positive
+                    ? "bg-red-500 dark:bg-red-400"
+                    : "bg-emerald-500 dark:bg-emerald-400"
                 }`}
                 style={{ width: `${width}%` }}
               />
@@ -116,9 +124,10 @@ function RecommendationCard({
 
   // Determine priority and styling
   let priority = "SUPPORTIVE";
-  let borderColor = "border-l-emerald-500";
-  let badgeBg = "bg-emerald-100 text-emerald-700";
-  let iconBg = "bg-emerald-50";
+  let borderColor = "border-l-emerald-500 dark:border-l-emerald-400";
+  let badgeBg =
+    "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300";
+  let iconBg = "bg-emerald-50 dark:bg-emerald-900/30";
   let icon = "👥";
   let actionButton = null;
 
@@ -128,12 +137,13 @@ function RecommendationCard({
     category.includes("high")
   ) {
     priority = "HIGH PRIORITY";
-    borderColor = "border-l-rose-500";
-    badgeBg = "bg-rose-100 text-rose-700";
-    iconBg = "bg-rose-50";
+    borderColor = "border-l-rose-500 dark:border-l-rose-400";
+    badgeBg =
+      "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300";
+    iconBg = "bg-rose-50 dark:bg-rose-900/30";
     icon = "⚕️";
     actionButton = (
-      <button className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition">
+      <button className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 transition">
         Initiate Referral
       </button>
     );
@@ -144,12 +154,13 @@ function RecommendationCard({
     category.includes("wasting")
   ) {
     priority = "MEDIUM PRIORITY";
-    borderColor = "border-l-amber-500";
-    badgeBg = "bg-amber-100 text-amber-700";
-    iconBg = "bg-amber-50";
+    borderColor = "border-l-amber-500 dark:border-l-amber-400";
+    badgeBg =
+      "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300";
+    iconBg = "bg-amber-50 dark:bg-amber-900/30";
     icon = "🍽️";
     actionButton = (
-      <button className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition">
+      <button className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 transition">
         Log Feeding Plan
       </button>
     );
@@ -159,12 +170,13 @@ function RecommendationCard({
     category.includes("caregiver")
   ) {
     priority = "SUPPORTIVE";
-    borderColor = "border-l-emerald-500";
-    badgeBg = "bg-emerald-100 text-emerald-700";
-    iconBg = "bg-emerald-50";
+    borderColor = "border-l-emerald-500 dark:border-l-emerald-400";
+    badgeBg =
+      "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300";
+    iconBg = "bg-emerald-50 dark:bg-emerald-900/30";
     icon = "👥";
     actionButton = (
-      <button className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition">
+      <button className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 transition">
         Contact Social Worker
       </button>
     );
@@ -172,7 +184,7 @@ function RecommendationCard({
 
   return (
     <div
-      className={`rounded-lg border border-l-4 border-slate-200 ${borderColor} bg-white p-6`}
+      className={`rounded-lg border border-l-4 border-slate-200 dark:border-slate-800 ${borderColor} bg-white dark:bg-slate-900 p-6`}
     >
       <div className="flex items-start gap-4">
         {/* Icon */}
@@ -185,7 +197,7 @@ function RecommendationCard({
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-4 mb-2 flex-wrap">
-            <h4 className="text-base font-bold text-slate-900">
+            <h4 className="text-base font-bold text-slate-900 dark:text-white">
               {rec.category}
             </h4>
             <span
@@ -195,12 +207,12 @@ function RecommendationCard({
             </span>
           </div>
 
-          <p className="text-sm text-slate-700 leading-relaxed mb-3">
+          <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
             {rec.recommendation}
           </p>
 
           <div className="flex items-center justify-between gap-4 flex-wrap">
-            <p className="text-xs text-slate-500 italic flex items-center gap-1">
+            <p className="text-xs text-slate-500 dark:text-slate-400 italic flex items-center gap-1">
               <svg
                 className="w-3 h-3 shrink-0"
                 fill="currentColor"
@@ -236,37 +248,37 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
   return (
     <div className="space-y-6 pb-8">
       {/* Breadcrumb */}
-      <div className="text-sm text-slate-500">
+      <div className="text-sm text-slate-500 dark:text-slate-400">
         Dashboard &nbsp;›&nbsp;{" "}
-        <span className="text-emerald-600 font-semibold">
+        <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
           Prediction Result
         </span>
       </div>
 
       {/* Header */}
-      <h1 className="text-3xl font-extrabold text-slate-900">
+      <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">
         Clinical Assessment
       </h1>
 
       {/* Main summary */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Left card */}
-        <div className="lg:col-span-2 rounded-lg border border-slate-200 bg-white p-8 flex gap-8 items-center">
+        <div className="lg:col-span-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 flex gap-8 items-center">
           <RiskRing value={data.risk_probability} />
 
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-3">
               <RiskBadge riskLevel={data.risk_level} />
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-slate-500 dark:text-slate-400">
                 Subject ID: #{data.id}
               </span>
             </div>
 
-            <h2 className="text-2xl font-extrabold text-slate-900 mb-2">
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">
               Malnutrition Detected
             </h2>
 
-            <p className="text-sm text-slate-600 leading-relaxed">
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               The model has identified a high probability of acute malnutrition
               based on current clinical indicators and household data.
             </p>
@@ -275,8 +287,8 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
 
         {/* Right stats */}
         <div className="space-y-12">
-          <div className="rounded-lg border border-slate-200 bg-white p-5">
-            <div className="flex items-center gap-2 text-emerald-600 mb-2">
+          <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-2">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
@@ -284,17 +296,17 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
                   clipRule="evenodd"
                 />
               </svg>
-              <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+              <div className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                 Model Confidence
               </div>
             </div>
-            <div className="text-xl font-extrabold text-slate-900">
+            <div className="text-xl font-extrabold text-slate-900 dark:text-white">
               High ({confidencePct}%)
             </div>
           </div>
 
-          <div className="rounded-lg border border-slate-200 bg-white p-5">
-            <div className="flex items-center gap-2 text-slate-600 mb-2">
+          <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+            <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 mb-2">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
@@ -306,7 +318,7 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
                 Assessment Time
               </div>
             </div>
-            <div className="text-xl font-extrabold text-slate-900">
+            <div className="text-xl font-extrabold text-slate-900 dark:text-white">
               {formatDate(data.created_at)}
             </div>
           </div>
@@ -314,11 +326,11 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
       </div>
 
       {/* XAI */}
-      <div className="rounded-lg border border-slate-200 bg-white p-7">
+      <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-7">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <svg
-              className="w-5 h-5 text-emerald-600"
+              className="w-5 h-5 text-emerald-600 dark:text-emerald-400"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -329,11 +341,11 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
                 clipRule="evenodd"
               />
             </svg>
-            <h3 className="font-extrabold text-slate-900 text-lg">
+            <h3 className="font-extrabold text-slate-900 dark:text-white text-lg">
               Why this result? (XAI)
             </h3>
           </div>
-          <button className="text-xs text-emerald-600 font-semibold hover:underline flex items-center gap-1">
+          <button className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline flex items-center gap-1">
             How it works
             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
               <path
@@ -345,7 +357,7 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
           </button>
         </div>
 
-        <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+        <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
           {data.xai_text ||
             "This prediction was influenced by multiple factors considered together. The horizontal bars indicate the relative contribution of each feature to the final risk score."}
         </p>
@@ -354,7 +366,7 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
           <XAIImpactBars factors={data.xai.top_factors} />
         )}
 
-        <p className="mt-5 text-xs italic text-slate-500 flex items-start gap-2">
+        <p className="mt-5 text-xs italic text-slate-500 dark:text-slate-400 flex items-start gap-2">
           <svg
             className="w-4 h-4 mt-0.5 shrink-0"
             fill="currentColor"
@@ -374,7 +386,7 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
       <div>
         <div className="flex items-center gap-2 mb-5">
           <svg
-            className="w-5 h-5 text-emerald-600"
+            className="w-5 h-5 text-emerald-600 dark:text-emerald-400"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -385,7 +397,7 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
               clipRule="evenodd"
             />
           </svg>
-          <h3 className="text-xl font-extrabold text-slate-900">
+          <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
             Required Actions & Recommendations
           </h3>
         </div>
@@ -398,8 +410,8 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
       </div>
 
       {/* Bottom Action Bar */}
-      <div className="flex items-center justify-between pt-6 border-t border-slate-200">
-        <button className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 font-semibold transition">
+      <div className="flex items-center justify-between pt-6 border-t border-slate-200 dark:border-slate-800">
+        <button className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold transition">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
@@ -413,13 +425,13 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
         <div className="flex gap-3">
           <button
             onClick={() => router.push("/history")}
-            className="px-5 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition"
+            className="px-5 py-2.5 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition"
           >
             Back to History
           </button>
           <button
             onClick={() => router.push("/")}
-            className="px-5 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-lg hover:bg-emerald-700 transition"
+            className="px-5 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-lg hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 transition"
           >
             New Prediction
           </button>
@@ -427,7 +439,7 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
       </div>
 
       {/* Footer */}
-      <div className="text-center text-xs text-slate-400 pt-4">
+      <div className="text-center text-xs text-slate-400 dark:text-slate-500 pt-4">
         © 2024 Malnutrition Risk Analysis Platform. Professional Clinical Use
         Only.
       </div>

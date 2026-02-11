@@ -81,7 +81,7 @@ export default function RecommendationCard({ rec }: { rec: Recommendation }) {
       <div className="flex items-start gap-4">
         {/* Icon */}
         <div
-          className={`flex-shrink-0 w-12 h-12 rounded-lg ${priority.iconBg} flex items-center justify-center text-2xl`}
+          className={`shrink-0 w-12 h-12 rounded-lg ${priority.iconBg} flex items-center justify-center text-2xl`}
         >
           {priority.icon}
         </div>
@@ -106,7 +106,7 @@ export default function RecommendationCard({ rec }: { rec: Recommendation }) {
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <p className="text-xs text-slate-500 dark:text-slate-400 italic flex items-center gap-1">
               <svg
-                className="w-3 h-3 flex-shrink-0"
+                className="w-3 h-3 shrink-0"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
