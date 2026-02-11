@@ -46,13 +46,15 @@ export default function PredictionForm() {
 
   const currentStepIndex = STEPS.findIndex((s) => s.id === currentStep);
 
-  function goNext() {
+  function goNext(e?: React.MouseEvent) {
+    e?.preventDefault();
     if (currentStepIndex < STEPS.length - 1) {
       setCurrentStep(STEPS[currentStepIndex + 1].id);
     }
   }
 
-  function goBack() {
+  function goBack(e?: React.MouseEvent) {
+    e?.preventDefault();
     if (currentStepIndex > 0) {
       setCurrentStep(STEPS[currentStepIndex - 1].id);
     }
@@ -120,7 +122,11 @@ export default function PredictionForm() {
             return (
               <div key={step.id} className="flex flex-col items-center">
                 <button
-                  onClick={() => setCurrentStep(step.id)}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentStep(step.id);
+                  }}
                   className={`w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all ${
                     isActive
                       ? "bg-emerald-500 dark:bg-emerald-600 text-white scale-110 shadow-lg"
@@ -474,7 +480,10 @@ export default function PredictionForm() {
           <div className="flex items-center justify-between pt-6 border-t border-slate-200 dark:border-slate-800">
             <button
               type="button"
-              onClick={goBack}
+              onClick={(e) => {
+                e.preventDefault();
+                goBack(e);
+              }}
               disabled={currentStepIndex === 0}
               className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition"
             >
@@ -491,7 +500,10 @@ export default function PredictionForm() {
             {currentStep !== "review" ? (
               <button
                 type="button"
-                onClick={goNext}
+                onClick={(e) => {
+                  e.preventDefault();
+                  goNext(e);
+                }}
                 className="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-lg hover:bg-emerald-700 transition"
               >
                 Next
