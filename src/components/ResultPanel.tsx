@@ -30,7 +30,7 @@ function RiskRing({ value }: { value: number }) {
   const dash = c * value;
 
   return (
-    <div className="relative h-44 w-44 flex-shrink-0">
+    <div className="relative h-44 w-44 shrink-0">
       <svg viewBox="0 0 160 160" className="-rotate-90">
         <circle
           cx="80"
@@ -177,7 +177,7 @@ function RecommendationCard({
       <div className="flex items-start gap-4">
         {/* Icon */}
         <div
-          className={`flex-shrink-0 w-12 h-12 rounded-lg ${iconBg} flex items-center justify-center text-2xl`}
+          className={`shrink-0 w-12 h-12 rounded-lg ${iconBg} flex items-center justify-center text-2xl`}
         >
           {icon}
         </div>
@@ -202,7 +202,7 @@ function RecommendationCard({
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <p className="text-xs text-slate-500 italic flex items-center gap-1">
               <svg
-                className="w-3 h-3 flex-shrink-0"
+                className="w-3 h-3 shrink-0"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -356,7 +356,7 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
 
         <p className="mt-5 text-xs italic text-slate-500 flex items-start gap-2">
           <svg
-            className="w-4 h-4 mt-0.5 flex-shrink-0"
+            className="w-4 h-4 mt-0.5 shrink-0"
             fill="currentColor"
             viewBox="0 0 20 20"
           >

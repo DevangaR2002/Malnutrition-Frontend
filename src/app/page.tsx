@@ -2,15 +2,7 @@ import PredictionForm from "@/components/PredictionForm";
 
 export default function Home() {
   return (
-    <main className="container-page">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold">Malnutrition Risk Prediction</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Predict child malnutrition risk using clinical and household
-          indicators.
-        </p>
-      </div>
-
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
       <PredictionForm />
     </main>
   );
