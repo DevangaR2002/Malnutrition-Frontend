@@ -1,6 +1,8 @@
 import RiskBadge from "./RiskBadge";
 import { PredictionResponse } from "@/lib/types";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { generatePredictionPDF } from "@/lib/pdfService";
 
 const FEATURE_LABELS: Record<string, string> = {
   Disease_Count: "Infectious Diseases (Active)",
@@ -236,6 +238,19 @@ function RecommendationCard({
 
 export default function ResultPanel({ data }: { data: PredictionResponse }) {
   const router = useRouter();
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    setIsGeneratingPDF(true);
+    try {
+      await generatePredictionPDF(data);
+    } catch (error) {
+      console.error("Failed to generate PDF:", error);
+      alert("Failed to generate PDF. Please try again.");
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
   // Calculate confidence as percentage
   const confidenceMap: Record<string, number> = {
@@ -411,15 +426,46 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
 
       {/* Bottom Action Bar */}
       <div className="flex items-center justify-between pt-6 border-t border-slate-200 dark:border-slate-800">
-        <button className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold transition">
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Download Full Report (PDF)
+        <button
+          onClick={handleDownloadPDF}
+          disabled={isGeneratingPDF}
+          className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isGeneratingPDF ? (
+            <>
+              <svg
+                className="w-4 h-4 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              Generating...
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Download Full Report (PDF)
+            </>
+          )}
         </button>
 
         <div className="flex gap-3">
