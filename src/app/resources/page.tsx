@@ -27,7 +27,7 @@ export default function ResourcesPage() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `nutriguard_research_export_${new Date().toISOString().split('T')[0]}.csv`;
+      a.download = `MalnutriAid_research_export_${new Date().toISOString().split('T')[0]}.csv`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -362,7 +362,7 @@ export default function ResourcesPage() {
                   clipRule="evenodd"
                 />
               </svg>
-              About NutriGuard AI
+              About MalnutriAid
             </h2>
             <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">
               This prediction tool uses machine learning models trained on

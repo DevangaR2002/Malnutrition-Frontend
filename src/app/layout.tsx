@@ -8,7 +8,7 @@ import { AuthProvider } from "@/context/AuthContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "NutriGuard AI - Malnutrition Risk Prediction",
+  title: "MalnutriAid - Malnutrition Risk Prediction",
   description:
     "AI-assisted diagnostic tool based on WHO clinical standards for malnutrition risk assessment in children",
 };
