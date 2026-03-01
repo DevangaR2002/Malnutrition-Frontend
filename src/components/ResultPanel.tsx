@@ -31,6 +31,17 @@ function RiskRing({ value }: { value: number }) {
   const c = 2 * Math.PI * r;
   const dash = c * value;
 
+  let strokeColor = "stroke-emerald-500 dark:stroke-emerald-400";
+  let textColor = "text-emerald-600 dark:text-emerald-400";
+
+  if (value >= 0.8) {
+    strokeColor = "stroke-rose-500 dark:stroke-rose-400";
+    textColor = "text-rose-600 dark:text-rose-400";
+  } else if (value >= 0.5) {
+    strokeColor = "stroke-amber-500 dark:stroke-amber-400";
+    textColor = "text-amber-600 dark:text-amber-400";
+  }
+
   return (
     <div className="relative h-44 w-44 shrink-0">
       <svg viewBox="0 0 160 160" className="-rotate-90">
@@ -48,7 +59,7 @@ function RiskRing({ value }: { value: number }) {
           strokeWidth="12"
           strokeLinecap="round"
           strokeDasharray={`${dash} ${c - dash}`}
-          className="fill-none stroke-red-500 dark:stroke-red-400"
+          className={`fill-none ${strokeColor} transition-all duration-1000 ease-out`}
         />
       </svg>
 
@@ -56,7 +67,7 @@ function RiskRing({ value }: { value: number }) {
         <div className="text-3xl font-extrabold text-slate-900 dark:text-white">
           {pct}%
         </div>
-        <div className="text-[10px] tracking-widest font-semibold text-red-600 dark:text-red-400 mt-0.5">
+        <div className={`text-[10px] tracking-widest font-semibold mt-0.5 ${textColor}`}>
           PROBABILITY
         </div>
       </div>
@@ -88,11 +99,10 @@ function XAIImpactBars({
                 {label}
               </span>
               <span
-                className={`text-xs font-bold ${
-                  positive
-                    ? "text-red-600 dark:text-red-400"
-                    : "text-emerald-600 dark:text-emerald-400"
-                }`}
+                className={`text-xs font-bold ${positive
+                  ? "text-red-600 dark:text-red-400"
+                  : "text-emerald-600 dark:text-emerald-400"
+                  }`}
               >
                 {positive ? "+" : "-"}
                 {Math.abs(Number(width))}% {positive ? "Impact" : "Protective"}
@@ -101,11 +111,10 @@ function XAIImpactBars({
 
             <div className="h-2 w-full rounded-full bg-slate-100 dark:bg-slate-800">
               <div
-                className={`h-2 rounded-full ${
-                  positive
-                    ? "bg-red-500 dark:bg-red-400"
-                    : "bg-emerald-500 dark:bg-emerald-400"
-                }`}
+                className={`h-2 rounded-full ${positive
+                  ? "bg-red-500 dark:bg-red-400"
+                  : "bg-emerald-500 dark:bg-emerald-400"
+                  }`}
                 style={{ width: `${width}%` }}
               />
             </div>
@@ -239,6 +248,41 @@ function RecommendationCard({
 export default function ResultPanel({ data }: { data: PredictionResponse }) {
   const router = useRouter();
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [feedbackStatus, setFeedbackStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [actualRisk, setActualRisk] = useState("Low Risk");
+  const [comments, setComments] = useState("");
+
+  const submitFeedback = async () => {
+    if (isCorrect === null) return;
+    setFeedbackStatus("submitting");
+
+    const payload = {
+      is_correct: isCorrect,
+      actual_risk_level: isCorrect ? null : actualRisk,
+      comments: comments || null,
+    };
+
+  
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/predictions/${data.id}/feedback`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token ? `Bearer ${token}` : ""
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error("Failed to submit");
+      setFeedbackStatus("success");
+    } catch (err) {
+      console.error(err);
+      setFeedbackStatus("error");
+    }
+  };
 
   const handleDownloadPDF = async () => {
     setIsGeneratingPDF(true);
@@ -259,6 +303,17 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
     Low: 55.0,
   };
   const confidencePct = confidenceMap[data.confidence] || 85.0;
+
+  let headingText = "Low Malnutrition Risk";
+  let descText = "The model indicates a low probability of malnutrition. Continue standard preventative care and monitoring.";
+
+  if (data.risk_probability >= 0.8) {
+    headingText = "Severe Malnutrition Risk";
+    descText = "The model has identified a high probability of acute malnutrition based on current clinical indicators and household data. Immediate clinical action is advised.";
+  } else if (data.risk_probability >= 0.5) {
+    headingText = "Moderate Malnutrition Risk";
+    descText = "The model detects moderate risk factors for malnutrition. Close monitoring, early nutritional intervention, and follow-ups are highly recommended.";
+  }
 
   return (
     <div className="space-y-6 pb-8">
@@ -290,12 +345,11 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
             </div>
 
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">
-              Malnutrition Detected
+              {headingText}
             </h2>
 
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              The model has identified a high probability of acute malnutrition
-              based on current clinical indicators and household data.
+              {descText}
             </p>
           </div>
         </div>
@@ -418,10 +472,97 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
         </div>
 
         <div className="space-y-4">
-          {data.recommendations.map((rec, i) => (
+          {data.recommendations?.map((rec, i) => (
             <RecommendationCard key={i} rec={rec} />
           ))}
         </div>
+      </div>
+
+      
+      <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <svg className="w-5 h-5 text-indigo-500 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clipRule="evenodd" />
+          </svg>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+            Clinical Feedback
+          </h3>
+        </div>
+
+        {feedbackStatus === "success" ? (
+          <div className="text-sm text-emerald-600 dark:text-emerald-400 font-semibold p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg flex items-center gap-2">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+            Thank you! Your clinical review has been recorded to improve future model predictions.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Do you agree with the ML unit's risk assessment of <strong>{data.risk_level}</strong>?
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsCorrect(true)}
+                className={`px-4 py-2 text-sm font-semibold rounded-lg border transition ${isCorrect === true ? "bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-indigo-900/30 dark:border-indigo-400 dark:text-indigo-300" : "bg-white border-slate-300 text-slate-700 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300"}`}
+              >
+                Yes, I agree
+              </button>
+              <button
+                onClick={() => setIsCorrect(false)}
+                className={`px-4 py-2 text-sm font-semibold rounded-lg border transition ${isCorrect === false ? "bg-rose-50 border-rose-500 text-rose-700 dark:bg-rose-900/30 dark:border-rose-400 dark:text-rose-300" : "bg-white border-slate-300 text-slate-700 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300"}`}
+              >
+                No, needs correction
+              </button>
+            </div>
+
+            {isCorrect === false && (
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Actual Risk Level Observed
+                  </label>
+                  <select
+                    value={actualRisk}
+                    onChange={(e) => setActualRisk(e.target.value)}
+                    className="w-full sm:max-w-xs border border-slate-300 dark:border-slate-700 rounded-lg p-2.5 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                  >
+                    <option value="Low Risk">Low Risk (Normal)</option>
+                    <option value="Medium Risk">Medium Risk (Moderate)</option>
+                    <option value="High Risk">High Risk (Severe)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Clinical Note (Optional)
+                  </label>
+                  <textarea
+                    value={comments}
+                    onChange={(e) => setComments(e.target.value)}
+                    placeholder="Why does the model estimate differ from biological reality contextually...?"
+                    className="w-full border border-slate-300 dark:border-slate-700 rounded-lg p-3 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                    rows={3}
+                  />
+                </div>
+              </div>
+            )}
+
+            {isCorrect !== null && (
+              <button
+                onClick={submitFeedback}
+                disabled={feedbackStatus === "submitting"}
+                className="btn-primary mt-2 flex items-center gap-2"
+              >
+                {feedbackStatus === "submitting" ? "Submitting..." : "Submit Review"}
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+              </button>
+            )}
+
+            {feedbackStatus === "error" && (
+              <div className="text-xs text-rose-500 font-semibold mt-2">Failed to submit feedback. Check connection or if prediction ID already reviewed.</div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Bottom Action Bar */}
@@ -470,10 +611,13 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
 
         <div className="flex gap-3">
           <button
-            onClick={() => router.push("/history")}
-            className="px-5 py-2.5 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+            onClick={() => router.push("/dashboard")}
+            className="px-5 py-2.5 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-2"
           >
-            Back to History
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Open Analytics
           </button>
           <button
             onClick={() => router.push("/")}

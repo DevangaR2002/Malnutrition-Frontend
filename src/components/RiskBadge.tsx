@@ -1,14 +1,18 @@
 export default function RiskBadge({ riskLevel }: { riskLevel: string }) {
   const isHigh = riskLevel?.toLowerCase().includes("high");
+  const isMedium = riskLevel?.toLowerCase().includes("medium") || riskLevel?.toLowerCase().includes("moderate");
+
+  let badgeClasses = "bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800";
+
+  if (isHigh) {
+    badgeClasses = "bg-rose-100 text-rose-700 border border-rose-200 dark:bg-rose-900/30 dark:text-rose-300 dark:border-rose-800";
+  } else if (isMedium) {
+    badgeClasses = "bg-amber-100 text-amber-700 border border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800";
+  }
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold tracking-wide uppercase
-        ${
-          isHigh
-            ? "bg-rose-100 text-rose-700 border border-rose-200 dark:bg-rose-900/30 dark:text-rose-300 dark:border-rose-800"
-            : "bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800"
-        }`}
+      className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold tracking-wide uppercase ${badgeClasses}`}
     >
       {isHigh ? (
         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -17,6 +21,10 @@ export default function RiskBadge({ riskLevel }: { riskLevel: string }) {
             d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
             clipRule="evenodd"
           />
+        </svg>
+      ) : isMedium ? (
+        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
         </svg>
       ) : (
         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
