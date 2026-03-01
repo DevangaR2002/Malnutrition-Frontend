@@ -36,7 +36,7 @@ export default function RegisterPage() {
                         Create an Account
                     </h2>
                     <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
-                        Join the NutriGuard AI platform
+                        Join the MalnutriAid platform
                     </p>
                 </div>
 

@@ -27,7 +27,7 @@ export async function generatePredictionPDF(data: PredictionResponse) {
   pdf.setTextColor(16, 185, 129);
   pdf.setFontSize(18);
   pdf.setFont("", "bold");
-  pdf.text("NutriGuard AI", margin + 10, yPos + 6);
+  pdf.text("MalnutriAid", margin + 10, yPos + 6);
   pdf.setFontSize(9);
   pdf.setTextColor(100, 100, 100);
   pdf.text("Malnutrition Risk Analysis Platform", margin + 10, yPos + 11);
@@ -273,7 +273,7 @@ export async function generatePredictionPDF(data: PredictionResponse) {
   pdf.setTextColor(100, 100, 100);
   pdf.setFont("", "normal");
   pdf.text(
-    "© 2024 NutriGuard AI - Professional Clinical Use Only",
+    "© 2024 MalnutriAid - Professional Clinical Use Only",
     margin,
     yPos,
   );

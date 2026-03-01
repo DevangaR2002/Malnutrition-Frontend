@@ -362,7 +362,7 @@ export default function ResourcesPage() {
                   clipRule="evenodd"
                 />
               </svg>
-              About NutriGuard AI
+              About malnutriAid
             </h2>
             <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">
               This prediction tool uses machine learning models trained on

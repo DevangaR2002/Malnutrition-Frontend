@@ -59,7 +59,7 @@ export default function Navbar() {
             </div>
             <div className="flex flex-col">
               <span className="text-lg font-bold text-slate-900 dark:text-white leading-none">
-                NutriGuard
+                MalnutriAid
               </span>
               <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 leading-none">
                 AI
