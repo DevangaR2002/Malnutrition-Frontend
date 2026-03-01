@@ -26,12 +26,8 @@ export default function PredictionForm() {
   const [error, setError] = useState<string | null>(null);
 
   const [form, setForm] = useState<PredictionRequest>({
-    age_months: 24,
-    gender: "Male",
     mother_education: "No education",
     household_wealth_index: "Low",
-    height_cm: 85.5,
-    weight_kg: 10.2,
     has_diarrhea: false,
     has_malaria: false,
     has_tb: false,
@@ -46,10 +42,36 @@ export default function PredictionForm() {
 
   const currentStepIndex = STEPS.findIndex((s) => s.id === currentStep);
 
+  function validateCurrentStep(): boolean {
+    setError(null);
+    if (currentStep === "child") {
+      if (form.age_months === undefined || form.age_months <= 0 || form.age_months > 59) {
+        setError("Please enter a valid age between 1 and 59 months.");
+        return false;
+      }
+      if (!form.gender) {
+        setError("Please select the child's gender.");
+        return false;
+      }
+      if (form.height_cm === undefined || form.height_cm <= 30 || form.height_cm > 130) {
+        setError("Please enter a valid height (cm) between 30 and 130.");
+        return false;
+      }
+      if (form.weight_kg === undefined || form.weight_kg <= 1 || form.weight_kg > 30) {
+        setError("Please enter a valid weight (kg) between 1 and 30.");
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   function goNext(e?: React.MouseEvent) {
     e?.preventDefault();
-    if (currentStepIndex < STEPS.length - 1) {
-      setCurrentStep(STEPS[currentStepIndex + 1].id);
+    if (validateCurrentStep()) {
+      if (currentStepIndex < STEPS.length - 1) {
+        setCurrentStep(STEPS[currentStepIndex + 1].id);
+      }
     }
   }
 
@@ -64,19 +86,7 @@ export default function PredictionForm() {
     e.preventDefault();
     setError(null);
 
-    // Validation
-    if (form.age_months <= 0 || form.age_months > 59) {
-      setError("Age must be between 1 and 59 months.");
-      return;
-    }
-    if (form.height_cm <= 30 || form.height_cm > 130) {
-      setError("Height looks invalid. Please check (cm).");
-      return;
-    }
-    if (form.weight_kg <= 1 || form.weight_kg > 30) {
-      setError("Weight looks invalid. Please check (kg).");
-      return;
-    }
+    if (!validateCurrentStep()) return;
 
     setLoading(true);
     try {
@@ -127,22 +137,20 @@ export default function PredictionForm() {
                     e.preventDefault();
                     setCurrentStep(step.id);
                   }}
-                  className={`w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all ${
-                    isActive
-                      ? "bg-emerald-500 dark:bg-emerald-600 text-white scale-110 shadow-lg"
-                      : isCompleted
-                        ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400"
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-400"
-                  }`}
+                  className={`w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all ${isActive
+                    ? "bg-emerald-500 dark:bg-emerald-600 text-white scale-110 shadow-lg"
+                    : isCompleted
+                      ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400"
+                      : "bg-slate-100 dark:bg-slate-800 text-slate-400"
+                    }`}
                 >
                   {isCompleted ? "✓" : step.icon}
                 </button>
                 <span
-                  className={`mt-2 text-xs font-semibold tracking-wide ${
-                    isActive
-                      ? "text-emerald-600 dark:text-emerald-400"
-                      : "text-slate-500 dark:text-slate-400"
-                  }`}
+                  className={`mt-2 text-xs font-semibold tracking-wide ${isActive
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : "text-slate-500 dark:text-slate-400"
+                    }`}
                 >
                   {step.label}
                 </span>
@@ -219,9 +227,9 @@ export default function PredictionForm() {
                     type="number"
                     placeholder="e.g. 24"
                     className="input w-full"
-                    value={form.age_months}
+                    value={form.age_months === undefined ? "" : form.age_months}
                     onChange={(e) =>
-                      update("age_months", Number(e.target.value))
+                      update("age_months", e.target.value === "" ? undefined : Number(e.target.value))
                     }
                   />
                 </div>
@@ -232,7 +240,7 @@ export default function PredictionForm() {
                   </label>
                   <select
                     className="select w-full"
-                    value={form.gender}
+                    value={form.gender || ""}
                     onChange={(e) => update("gender", e.target.value as Gender)}
                   >
                     <option value="">Select gender</option>
@@ -253,9 +261,9 @@ export default function PredictionForm() {
                     step="0.1"
                     placeholder="e.g. 85.5"
                     className="input w-full"
-                    value={form.height_cm}
+                    value={form.height_cm === undefined ? "" : form.height_cm}
                     onChange={(e) =>
-                      update("height_cm", Number(e.target.value))
+                      update("height_cm", e.target.value === "" ? undefined : Number(e.target.value))
                     }
                   />
                 </div>
@@ -269,9 +277,9 @@ export default function PredictionForm() {
                     step="0.1"
                     placeholder="e.g. 10.2"
                     className="input w-full"
-                    value={form.weight_kg}
+                    value={form.weight_kg === undefined ? "" : form.weight_kg}
                     onChange={(e) =>
-                      update("weight_kg", Number(e.target.value))
+                      update("weight_kg", e.target.value === "" ? undefined : Number(e.target.value))
                     }
                   />
                 </div>
@@ -309,7 +317,7 @@ export default function PredictionForm() {
                   </label>
                   <select
                     className="select w-full"
-                    value={form.mother_education}
+                    value={form.mother_education || ""}
                     onChange={(e) => update("mother_education", e.target.value)}
                   >
                     {EDUCATION_OPTIONS.map((opt) => (
@@ -326,7 +334,7 @@ export default function PredictionForm() {
                   </label>
                   <select
                     className="select w-full"
-                    value={form.household_wealth_index}
+                    value={form.household_wealth_index || ""}
                     onChange={(e) =>
                       update(
                         "household_wealth_index",
@@ -376,19 +384,19 @@ export default function PredictionForm() {
                 <ConditionToggle
                   icon="💧"
                   label="Diarrhea"
-                  checked={form.has_diarrhea}
+                  checked={form.has_diarrhea ?? false}
                   onChange={(v) => update("has_diarrhea", v)}
                 />
                 <ConditionToggle
                   icon="🦟"
                   label="Malaria"
-                  checked={form.has_malaria}
+                  checked={form.has_malaria ?? false}
                   onChange={(v) => update("has_malaria", v)}
                 />
                 <ConditionToggle
                   icon="🦠"
                   label="Has TB"
-                  checked={form.has_tb}
+                  checked={form.has_tb ?? false}
                   onChange={(v) => update("has_tb", v)}
                 />
               </div>
@@ -444,20 +452,20 @@ export default function PredictionForm() {
 
               <div className="space-y-4">
                 <ReviewSection title="Child Information">
-                  <ReviewItem label="Age" value={`${form.age_months} months`} />
-                  <ReviewItem label="Gender" value={form.gender} />
-                  <ReviewItem label="Height" value={`${form.height_cm} cm`} />
-                  <ReviewItem label="Weight" value={`${form.weight_kg} kg`} />
+                  <ReviewItem label="Age" value={form.age_months ? `${form.age_months} months` : "Not provided"} />
+                  <ReviewItem label="Gender" value={form.gender || "Not provided"} />
+                  <ReviewItem label="Height" value={form.height_cm ? `${form.height_cm} cm` : "Not provided"} />
+                  <ReviewItem label="Weight" value={form.weight_kg ? `${form.weight_kg} kg` : "Not provided"} />
                 </ReviewSection>
 
                 <ReviewSection title="Household">
                   <ReviewItem
                     label="Mother's Education"
-                    value={form.mother_education}
+                    value={form.mother_education || "Not provided"}
                   />
                   <ReviewItem
                     label="Wealth Index"
-                    value={form.household_wealth_index}
+                    value={form.household_wealth_index || "Not provided"}
                   />
                 </ReviewSection>
 
@@ -599,11 +607,10 @@ function ConditionToggle({
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      className={`rounded-lg border p-4 transition-all ${
-        checked
-          ? "border-slate-900 dark:border-emerald-500 bg-slate-50 dark:bg-slate-800"
-          : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-600"
-      }`}
+      className={`rounded-lg border p-4 transition-all ${checked
+        ? "border-slate-900 dark:border-emerald-500 bg-slate-50 dark:bg-slate-800"
+        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-600"
+        }`}
     >
       <div className="text-2xl mb-2">{icon}</div>
       <div className="text-sm font-semibold text-slate-900 dark:text-white">
