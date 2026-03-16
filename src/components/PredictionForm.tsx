@@ -170,7 +170,15 @@ export default function PredictionForm() {
                   type="button"
                   onClick={(e) => {
                     e.preventDefault();
-                    setCurrentStep(step.id);
+                    if (idx < currentStepIndex) {
+                      // Allow going back freely
+                      setCurrentStep(step.id);
+                    } else if (idx === currentStepIndex + 1) {
+                      // Allow going forward one step ONLY if validation passes
+                      if (validateCurrentStep()) {
+                        setCurrentStep(step.id);
+                      }
+                    }
                   }}
                   className={`w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all ${isActive
                     ? "bg-emerald-500 dark:bg-emerald-600 text-white scale-110 shadow-lg"

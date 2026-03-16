@@ -87,6 +87,32 @@ export default function AdminPage() {
         fetchAdminData();
     }, [user, router]);
 
+    const handleToggleUserStatus = async (userId: number, currentStatus: boolean) => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`http://localhost:8000/api/admin/users/${userId}/toggle-status`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.detail || "Failed to toggle user status.");
+            }
+
+            // Optimistically update the UI to instantly reflect the new status
+            setUsers(users.map(u => 
+                u.id === userId ? { ...u, is_active: !currentStatus } : u
+            ));
+            
+        } catch (err: any) {
+            alert(err.message || "An error occurred while communicating with the server.");
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
@@ -182,7 +208,12 @@ export default function AdminPage() {
                                             }
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <button className="text-indigo-600 dark:text-indigo-400 font-semibold text-xs hover:underline disabled:opacity-50">Revoke Access</button>
+                                            <button 
+                                                onClick={() => handleToggleUserStatus(u.id, u.is_active)}
+                                                className={`font-semibold text-xs hover:underline disabled:opacity-50 ${u.is_active ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}
+                                            >
+                                                {u.is_active ? "Revoke Access" : "Grant Access"}
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
