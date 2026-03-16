@@ -19,6 +19,35 @@ const STEPS: { id: Step; label: string; icon: string }[] = [
   { id: "review", label: "REVIEW", icon: "📋" },
 ];
 
+function validateAnthropometrics(age: number, gender: string, height: number, weight: number): string | null {
+  if (age < 0 || age > 60) return "Please enter a valid age between 0 and 60 months.";
+  
+  let minH = 0, maxH = 0, minW = 0, maxW = 0;
+  
+  if (gender === "Male") {
+    if (age <= 12) { minH = 45; maxH = 80; minW = 2.5; maxW = 11; }
+    else if (age <= 24) { minH = 70; maxH = 92; minW = 8; maxW = 14; }
+    else if (age <= 36) { minH = 82; maxH = 100; minW = 10; maxW = 16; }
+    else if (age <= 48) { minH = 90; maxH = 108; minW = 12; maxW = 18; }
+    else if (age <= 60) { minH = 96; maxH = 115; minW = 14; maxW = 21; }
+  } else {
+    if (age <= 12) { minH = 44; maxH = 78; minW = 2.4; maxW = 10.5; }
+    else if (age <= 24) { minH = 68; maxH = 90; minW = 7.5; maxW = 13; }
+    else if (age <= 36) { minH = 80; maxH = 98; minW = 9.5; maxW = 15; }
+    else if (age <= 48) { minH = 88; maxH = 106; minW = 11.5; maxW = 17; }
+    else if (age <= 60) { minH = 94; maxH = 112; minW = 13.5; maxW = 20; }
+  }
+
+  if (height < minH || height > maxH) {
+    return `For a ${age}-month old ${gender}, height must be between ${minH} and ${maxH} cm.`;
+  }
+  if (weight < minW || weight > maxW) {
+    return `For a ${age}-month old ${gender}, weight must be between ${minW} and ${maxW} kg.`;
+  }
+
+  return null;
+}
+
 export default function PredictionForm() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<Step>("child");
@@ -45,20 +74,26 @@ export default function PredictionForm() {
   function validateCurrentStep(): boolean {
     setError(null);
     if (currentStep === "child") {
-      if (form.age_months === undefined || form.age_months <= 0 || form.age_months > 59) {
-        setError("Please enter a valid age between 1 and 59 months.");
+      if (form.age_months === undefined) {
+        setError("Please enter a valid age.");
         return false;
       }
       if (!form.gender) {
         setError("Please select the child's gender.");
         return false;
       }
-      if (form.height_cm === undefined || form.height_cm <= 30 || form.height_cm > 130) {
-        setError("Please enter a valid height (cm) between 30 and 130.");
+      if (form.height_cm === undefined) {
+        setError("Please enter the child's height.");
         return false;
       }
-      if (form.weight_kg === undefined || form.weight_kg <= 1 || form.weight_kg > 30) {
-        setError("Please enter a valid weight (kg) between 1 and 30.");
+      if (form.weight_kg === undefined) {
+        setError("Please enter the child's weight.");
+        return false;
+      }
+
+      const validationError = validateAnthropometrics(form.age_months, form.gender, form.height_cm, form.weight_kg);
+      if (validationError) {
+        setError(validationError);
         return false;
       }
     }

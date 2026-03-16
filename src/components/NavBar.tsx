@@ -96,6 +96,17 @@ export default function Navbar() {
             >
               Resources
             </Link>
+            {user && (
+              <Link
+                href="/dashboard"
+                className={`text-sm font-semibold transition ${pathname === "/dashboard"
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  }`}
+              >
+                Dashboard
+              </Link>
+            )}
             {user?.is_admin && (
               <Link
                 href="/admin"
