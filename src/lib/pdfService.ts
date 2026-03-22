@@ -283,7 +283,7 @@ export async function generatePredictionPDF(data: PredictionResponse) {
     yPos,
   );
 
-  const filename = `malnutrition-risk-report-${data.id}-${Date.now()}.pdf`;
+  const filename = `malnutriaid-risk-report-${data.id}-${Date.now()}.pdf`;
   pdf.save(filename);
 }
 
