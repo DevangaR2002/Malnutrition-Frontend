@@ -267,7 +267,7 @@ export default function ResultPanel({ data }: { data: PredictionResponse }) {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch(`http://localhost:8000/api/predictions/${data.id}/feedback`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/predictions/${data.id}/feedback`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

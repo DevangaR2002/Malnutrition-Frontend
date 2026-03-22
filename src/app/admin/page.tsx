@@ -66,9 +66,9 @@ export default function AdminPage() {
 
             try {
                 const [metricsRes, usersRes, fbRes] = await Promise.all([
-                    fetch("http://localhost:8000/api/admin/metrics", { headers }),
-                    fetch("http://localhost:8000/api/admin/users", { headers }),
-                    fetch("http://localhost:8000/api/admin/feedback", { headers })
+                    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/admin/metrics`, { headers }),
+                    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/admin/users`, { headers }),
+                    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/admin/feedback`, { headers })
                 ]);
 
                 if (!metricsRes.ok || !usersRes.ok || !fbRes.ok) {
@@ -91,7 +91,7 @@ export default function AdminPage() {
     const handleToggleUserStatus = async (userId: number, currentStatus: boolean) => {
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch(`http://localhost:8000/api/admin/users/${userId}/toggle-status`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/admin/users/${userId}/toggle-status`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -119,7 +119,7 @@ export default function AdminPage() {
         
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch(`http://localhost:8000/api/admin/users/${userId}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/admin/users/${userId}`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`

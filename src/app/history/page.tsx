@@ -16,7 +16,7 @@ export default function HistoryPage() {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          "http://localhost:8000/api/predictions/history",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/predictions/history`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -41,7 +41,7 @@ export default function HistoryPage() {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://localhost:8000/api/predictions/${item.id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/predictions/${item.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

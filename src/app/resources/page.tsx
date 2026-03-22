@@ -12,7 +12,7 @@ export default function ResourcesPage() {
     setExportError(null);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8000/api/predictions/export/dataset", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/predictions/export/dataset`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
