@@ -20,7 +20,7 @@ const STEPS: { id: Step; label: string; icon: string }[] = [
 ];
 
 function validateAnthropometrics(age: number, gender: string, height: number, weight: number): string | null {
-  if (age < 0 || age > 60) return "Please enter a valid age between 0 and 60 months.";
+  if (age < 0 || age > 59) return "Please enter a valid age between 0 and 59 months.";
   
   let minH = 0, maxH = 0, minW = 0, maxW = 0;
   
@@ -29,13 +29,13 @@ function validateAnthropometrics(age: number, gender: string, height: number, we
     else if (age <= 24) { minH = 70; maxH = 92; minW = 8; maxW = 14; }
     else if (age <= 36) { minH = 82; maxH = 100; minW = 10; maxW = 16; }
     else if (age <= 48) { minH = 90; maxH = 108; minW = 12; maxW = 18; }
-    else if (age <= 60) { minH = 96; maxH = 115; minW = 14; maxW = 21; }
+    else if (age <= 59) { minH = 96; maxH = 115; minW = 14; maxW = 21; }
   } else {
     if (age <= 12) { minH = 44; maxH = 78; minW = 2.4; maxW = 10.5; }
     else if (age <= 24) { minH = 68; maxH = 90; minW = 7.5; maxW = 13; }
     else if (age <= 36) { minH = 80; maxH = 98; minW = 9.5; maxW = 15; }
     else if (age <= 48) { minH = 88; maxH = 106; minW = 11.5; maxW = 17; }
-    else if (age <= 60) { minH = 94; maxH = 112; minW = 13.5; maxW = 20; }
+    else if (age <= 59) { minH = 94; maxH = 112; minW = 13.5; maxW = 20; }
   }
 
   if (height < minH || height > maxH) {

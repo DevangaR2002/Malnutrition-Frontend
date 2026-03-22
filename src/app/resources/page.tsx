@@ -27,7 +27,7 @@ export default function ResourcesPage() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `nutriguard_research_export_${new Date().toISOString().split('T')[0]}.csv`;
+      a.download = `malnutriaid_research_export_${new Date().toISOString().split('T')[0]}.csv`;
       document.body.appendChild(a);
       a.click();
       a.remove();
