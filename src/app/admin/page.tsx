@@ -15,6 +15,7 @@ type UserAccount = {
     username: string;
     email: string;
     is_active: boolean;
+    is_admin: boolean;
 };
 
 type PredictionFeedback = {
@@ -113,6 +114,31 @@ export default function AdminPage() {
         }
     };
 
+    const handleDeleteUser = async (userId: number) => {
+        if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) return;
+        
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`http://localhost:8000/api/admin/users/${userId}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                throw new Error(data.detail || "Failed to delete user.");
+            }
+
+            // Remove user from state
+            setUsers(users.filter(u => u.id !== userId));
+            
+        } catch (err: any) {
+            alert(err.message || "An error occurred while deleting the user.");
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
@@ -190,6 +216,7 @@ export default function AdminPage() {
                                     <th className="px-6 py-4">ID</th>
                                     <th className="px-6 py-4">Username</th>
                                     <th className="px-6 py-4">Email</th>
+                                    <th className="px-6 py-4">Role</th>
                                     <th className="px-6 py-4">Status</th>
                                     <th className="px-6 py-4 text-right">Actions</th>
                                 </tr>
@@ -201,6 +228,13 @@ export default function AdminPage() {
                                         <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{u.username}</td>
                                         <td className="px-6 py-4">{u.email}</td>
                                         <td className="px-6 py-4">
+                                            {u.is_admin ? (
+                                                <span className="text-xs font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/30 px-2.5 py-1 rounded-full">Administrator</span>
+                                            ) : (
+                                                <span className="text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full">Clinician</span>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
                                             {u.is_active ?
                                                 <span className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-2.5 py-1 rounded-full text-xs font-bold">Active</span>
                                                 :
@@ -208,12 +242,22 @@ export default function AdminPage() {
                                             }
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <button 
-                                                onClick={() => handleToggleUserStatus(u.id, u.is_active)}
-                                                className={`font-semibold text-xs hover:underline disabled:opacity-50 ${u.is_active ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}
-                                            >
-                                                {u.is_active ? "Revoke Access" : "Grant Access"}
-                                            </button>
+                                            <div className="flex justify-end gap-3 items-center">
+                                                <button 
+                                                    onClick={() => handleToggleUserStatus(u.id, u.is_active)}
+                                                    disabled={u.is_admin}
+                                                    className={`font-semibold text-xs hover:underline disabled:opacity-50 ${u.is_active ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}
+                                                >
+                                                    {u.is_active ? "Revoke Access" : "Grant Access"}
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleDeleteUser(u.id)}
+                                                    disabled={u.is_admin}
+                                                    className="font-semibold text-xs text-rose-600 dark:text-rose-400 hover:underline disabled:opacity-50"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
